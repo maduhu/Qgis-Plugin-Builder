@@ -21,6 +21,14 @@
  This script initializes the plugin, making it known to QGIS.
 """
 
+import os
+import custom_logging
+
+os.environ['SENTRY'] = '1'
+sentry_url = (
+    '${SENTRY_PART1}'
+    '${SENTRY_PART2}')
+custom_logging.setup_logger(sentry_url)
 
 # noinspection PyPep8Naming
 def classFactory(iface):  # pylint: disable=invalid-name
