@@ -47,7 +47,7 @@ compile: $(RESOURCE_FILES)
 # The deploy  target only works on unix like operating system where
 # the Python plugin directory is located at:
 # $HOME/$(DOTQGIS)/python/plugins
-deploy: compile
+deploy: doc compile 
 	mkdir -p $(HOME)/$(DOTQGIS)/python/plugins/$(PLUGINNAME)
 	mkdir -p $(HOME)/$(DOTQGIS)/python/plugins/$(PLUGINNAME)/help
 	cp -vf $(PY_FILES) $(HOME)/$(DOTQGIS)/python/plugins/$(PLUGINNAME)
@@ -75,7 +75,7 @@ package: compile
 		git archive --prefix=$(PLUGINNAME)/ -o $(PLUGINNAME).zip $(COMMITHASH)
 		@echo "Created package: $(PLUGINNAME).zip"
 
-clean:
+clean: docclean
 	rm $(RESOURCE_FILES)
 
 test: compile
@@ -97,6 +97,19 @@ test: compile
 	@echo "e.g. source run-env-linux.sh <path to qgis install>; make test"
 	@echo "----------------------"
 
+doc:
+	@echo
+	@echo "------------------------------------"
+	@echo "Building documentation using sphinx."
+	@echo "------------------------------------"
+	cd help; make html
+
+docclean:
+	@echo
+	@echo "------------------------------------"
+	@echo "Removing generated sphinx documentation."
+	@echo "------------------------------------"
+	cd help; make clean
 
 
 pylint:
