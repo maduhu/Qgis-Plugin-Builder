@@ -109,7 +109,7 @@ class BuilderTest(unittest.TestCase):
     def setUp(self):
         """Setup run before each test."""
         self.templates_path = os.path.abspath(os.path.join(
-            os.path.dirname(__file__), '..', 'plugin_template'))
+            os.path.dirname(__file__), '..', 'dialog_plugin_template'))
 
     def test_dir_copy(self):
         """Test that we can copy a directory of files.

@@ -68,6 +68,7 @@ class PluginBuilder:
         self.user_plugin_dir = QFileInfo(
             QgsApplication.qgisUserDbFilePath()).path() + 'python/plugins'
         self.plugin_builder_path = os.path.dirname(__file__)
+        self.template_directory = 'dialog_plugin_template'
 
         # class members
         self.action = None
@@ -124,7 +125,7 @@ class PluginBuilder:
             'help/source/index.rst.tmpl', 'help/source/index.rst')
         # copy the unit tests folder
         test_source = os.path.join(
-            os.path.dirname(__file__), 'plugin_template', 'test')
+            os.path.dirname(__file__), self.template_directory, 'test')
         test_destination = os.path.join(self.plugin_path, 'test')
         copy(test_source, test_destination)
         # These are templates so we don't copy it directly.
@@ -144,11 +145,11 @@ class PluginBuilder:
     def _prepare_scripts(self):
         """Copy the scripts folder."""
         scripts_source = os.path.join(
-            os.path.dirname(__file__), 'plugin_template', 'scripts')
+            os.path.dirname(__file__), self.template_directory, 'scripts')
         copy(scripts_source, os.path.join(self.plugin_path, 'scripts'))
         # copy the i18n folder
         scripts_source = os.path.join(
-            os.path.dirname(__file__), 'plugin_template', 'i18n')
+            os.path.dirname(__file__), self.template_directory, 'i18n')
         copy(scripts_source, os.path.join(self.plugin_path, 'i18n'))
 
     def _prepare_help(self, template_dir):
@@ -237,7 +238,7 @@ class PluginBuilder:
         # populate the results readme text template
         template_file = open(os.path.join(
             str(self.plugin_builder_path),
-            'plugin_template',
+            self.template_directory,
             'readme.tmpl'))
         content = template_file.read()
         template_file.close()
@@ -328,7 +329,7 @@ class PluginBuilder:
             specification.template_map['TemplateModuleName']
         template_file = open(os.path.join(
             str(self.plugin_builder_path),
-            'plugin_template',
+            self.template_directory,
             'results.tmpl'))
         content = template_file.read()
         template_file.close()
@@ -356,7 +357,7 @@ class PluginBuilder:
             str(self.dialog.class_name.text()))
         QDir().mkdir(self.plugin_path)
         template_dir = os.path.join(
-            str(self.plugin_builder_path), 'plugin_template')
+            str(self.plugin_builder_path), self.template_directory)
         return template_dir
 
     def _last_used_path(self):
@@ -480,8 +481,9 @@ class PluginBuilder:
         :param output_name:  Name of the output file to create.
         :type output_name: str
         """
-        template_file_path = os.path.join(str(self.plugin_builder_path),
-                                          'plugin_template', template_name)
+        template_file_path = os.path.join(
+            str(self.plugin_builder_path),
+            self.template_directory, template_name)
         output_name_path = os.path.join(self.plugin_path, output_name)
 
         if sys.platform == 'win32':
