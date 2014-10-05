@@ -15,12 +15,14 @@ __copyright__ = ('Copyright 2012, Australia Indonesia Facility for '
 
 import os
 import unittest
+
 from qgis.core import (
     QgsProviderRegistry,
     QgsCoordinateReferenceSystem,
     QgsRasterLayer)
 
-from utilities import get_qgis_app
+from templates.dialog_plugin_template.test.utilities import get_qgis_app
+
 QGIS_APP = get_qgis_app()
 
 
