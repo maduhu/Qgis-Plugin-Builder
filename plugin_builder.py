@@ -179,7 +179,52 @@ class PluginBuilder:
             os.path.join(template_dir, 'help/Makefile'),
             os.path.join(self.plugin_path, 'help/Makefile'))
 
-    def _prepare_code(self, specification, template_dir):
+    def _prepare_zen_code(self, specification, template_dir):
+        """Prepare the code turning templates into python.
+
+        :param specification: Specification instance containing template
+            replacement keys/values.
+        :type specification: PluginSpecification
+
+        :param template_dir: Directory where template is.
+        :type template_dir: str
+        """
+        # process the user entries
+        self.populate_template(
+            specification, 'Makefile.tmpl', 'Makefile')
+        self.populate_template(
+            specification, 'pb_tool.tmpl', 'pb_tool.cfg')
+        self.populate_template(
+            specification, '__init__.tmpl', '__init__.py')
+        self.populate_template(
+            specification, 'module_name.tmpl',
+            '%s.py' % specification.module_name)
+        self.populate_template(
+            specification, 'module_name_dialog.tmpl',
+            '%s_dialog.py' % specification.module_name)
+        self.populate_template(
+            specification, 'module_name_dialog_base.ui.tmpl',
+            '%s_dialog_base.ui' % specification.module_name)
+        self.populate_template(
+            specification, 'resources.tmpl', 'resources.qrc')
+        # copy the non-generated files to the new plugin dir
+        icon = QFile(os.path.join(template_dir, 'icon.png'))
+        icon.copy(os.path.join(self.plugin_path, 'icon.png'))
+        release_script = QFile(os.path.join(template_dir, 'release.sh'))
+        release_script.copy(os.path.join(self.plugin_path, 'release.sh'))
+        plugin_upload = QFile(
+            os.path.join(template_dir, 'plugin_upload.py'))
+        plugin_upload.copy(
+            os.path.join(self.plugin_path, 'plugin_upload.py'))
+        # noinspection PyCallByClass,PyTypeChecker
+        QFile.setPermissions(
+            os.path.join(self.plugin_path, 'plugin_upload.py'),
+            QFile.ReadOwner | QFile.WriteOwner | QFile.ExeOwner |
+            QFile.ReadUser | QFile.WriteUser | QFile.ExeUser |
+            QFile.ReadGroup | QFile.ExeGroup | QFile.ReadOther |
+            QFile.ExeOther)
+
+    def _prepare_common_code(self, specification, template_dir):
         """Prepare the code turning templates into python.
 
         :param specification: Specification instance containing template
@@ -360,12 +405,13 @@ class PluginBuilder:
             str(self.plugin_builder_path), self.template_directory)
         return template_dir
 
+    @staticmethod
     def _last_used_path(self):
         return QSettings().value('PluginBuilder/last_path', '.')
 
+    @staticmethod
     def _set_last_used_path(self, value):
         QSettings().setValue('PluginBuilder/last_path', value)
-
 
     def run(self):
         """Run method that performs all the real work"""
@@ -392,7 +438,10 @@ class PluginBuilder:
         # get the location for the plugin
         # noinspection PyCallByClass,PyTypeChecker
         self.plugin_path = QFileDialog.getExistingDirectory(
-            self.dialog, 'Select the Directory for your Plugin', self._last_used_path())
+            self.dialog,
+            'Select the Directory for your Plugin',
+            self._last_used_path())
+
         if self.plugin_path == '':
             return
         else:
@@ -401,7 +450,7 @@ class PluginBuilder:
 
         self._set_last_used_path(self.plugin_path)
         template_dir = self._create_plugin_directory()
-        self._prepare_code(specification, template_dir)
+        self._prepare_common_code(specification, template_dir)
         self._prepare_help(template_dir)
         self._prepare_tests(specification)
 

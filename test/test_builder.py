@@ -131,7 +131,7 @@ class BuilderTest(unittest.TestCase):
         iface = QgisInterface(None)
         builder = PluginBuilder(iface)
         builder.plugin_path = temp_path
-        builder._prepare_code(self.specification, temp_path)
+        builder._prepare_common_code(self.specification, temp_path)
 
     def test_prepare_results_html(self):
         """Test the prepare results helper works."""
